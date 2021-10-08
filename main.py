@@ -144,5 +144,14 @@ async def roll(ctx):
     else:
         await ctx.send("It is not Your Chance, {} play your chance!!".format(players[turn]))
 
+@bot.command(pass_context=True)
+async def helpme(ctx):
+    await ctx.send("""
+    !new <@player1> <@player2>.... [difficulty: integer] :- start a new game
+!roll:- roll a dice 
+!get_leaderboard :- Leaderboard
+!helpme :- Help commands
+    """)
+
 load_dotenv()
 bot.run(os.environ.get("BOT_TOKEN"))
