@@ -16,9 +16,7 @@ import pandas as pd
 # from time import sleep
 # from random import randint
 
-root = tk.Tk()
-root.attributes('-topmost',True)
-root.attributes("-alpha", 0.9)
+root = 1
 
 bot = commands.Bot(command_prefix="!")
 players =[]
@@ -36,7 +34,7 @@ difficulty=2
 @bot.event
 async def on_ready():
     print("Connected!")
-    global players,player_clrs,turn,new_board, game,Grid
+    global players,player_clrs,turn,new_board, game,Grid,root
     players = []
     player_clrs= []
     turn = 0
@@ -47,18 +45,22 @@ async def on_ready():
 
 @bot.command(pass_context=True)
 async def get_leaderboard(ctx):
-
     dataset=pd.read_csv('./leaderboard.csv')
     dataset.drop(dataset.filter(regex="Unnamed"),axis=1, inplace=True)
-    s = ['Player     Wins   Losses']
+    dataset=dataset.sort_values(by=['Wins'], ascending=False)
+    s = 'Player'+'    '+"Wins"+'    '+'Losses'
+    await ctx.send(s)
     # This needs to be adjusted based on expected range of values or   calculated dynamically
     for index, data in dataset.iterrows():
-        s.append('   '.join([str(item).center(7, ' ') for item in data.values]))
+        s=""
+        for item in data.values:
+            s+=str(item)+"   "
         # Joining up scores into a line
-    d = '```'+'\n'.join(s) + '```'
-    # Joining all lines togethor! 
-    embed = discord.Embed(title = 'Quotient Results', description = d)
-    await ctx.send(embed = embed)
+        await ctx.send(s)
+    # d = '```'+'\n'.join(s) + '```'
+    # # Joining all lines togethor! 
+    # embed = discord.Embed(title = 'Leaderboard', description = d)
+    # await ctx.send(embed = embed)
 
 
 
@@ -66,7 +68,7 @@ async def get_leaderboard(ctx):
 @bot.command(pass_context=True)
 async def new(ctx, *player_args_):
     # print(new_board)
-    global players,players_clrs,turn,new_board, game, Grid, players_pos,colors,difficulty
+    global players,players_clrs,turn,new_board, game, Grid, players_pos,colors,difficulty,root
     if new_board:
         if(len(player_args_[-1])==1):
             difficulty=int(player_args_[-1])
@@ -74,11 +76,14 @@ async def new(ctx, *player_args_):
         else:
           player_args=player_args_
 
-
+        turn=0
         players=[]
         players_pos =[]
         players_clrs=[]
         game=True
+        root=tk.Tk()
+        root.attributes('-topmost',True)
+        root.attributes("-alpha", 0.9)
         for player in player_args:
           print(player)
           await ctx.send("Starting a new Game Between "+ player+" ")
@@ -95,10 +100,10 @@ async def new(ctx, *player_args_):
           new_board=False
           Grid=SnL_generator(difficulty)
           for i in range(len(players)):
-            players_pos.append([9,0])
+            players_pos.append([0,7])
             players_clrs.append(colors[i])
     else:
-        await ctx.send("You already have a game running")
+        await ctx.send("You already have a game running_")
 
 
 @bot.command(pass_context=True)
@@ -108,6 +113,7 @@ async def roll(ctx):
     if(not game):
       await ctx.send("Game Ended !!!")
       new_board=True
+      root.quit()
       return;
     print(ctx.message.author.mention,players[turn])
     
@@ -125,6 +131,8 @@ async def roll(ctx):
         if(players_pos[turn]==[0,0]):
             await ctx.send("{} Won !!!".format(players[turn]))
             game=False
+            root.quit()
+            new_board=True
             update_leaderboard(players, turn)
         else:
           turn = (turn+1)%len(players)
