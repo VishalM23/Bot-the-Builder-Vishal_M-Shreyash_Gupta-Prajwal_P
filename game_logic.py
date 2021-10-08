@@ -39,8 +39,8 @@ def refresh_grid(root, players, players_pos, players_clrs, LabelGrid, Grid):
             elif Grid[i][j] == "End":
                 Label.configure(text="End",bg="Gold")
             else:
-                LabelText = "Leads to\nCollumn "+str(Grid[i][j][1])+"\nRow "+str(Grid[i][j][0])
-                Label.configure(text=LabelText,bg="Red" if Grid[i][j][2] == "S" else "Green")
+                LabelText = "Leads to\nColumn "+str(Grid[i][j][1])+"\nRow "+str(Grid[i][j][0])
+                Label.configure(text=LabelText,bg="#f96262" if Grid[i][j][2] == "S" else "#52f488")
   
     for i in range(len(players)):
         p= tk.Label(root,text="Player"+str(i+1),bg=players_clrs[i])
