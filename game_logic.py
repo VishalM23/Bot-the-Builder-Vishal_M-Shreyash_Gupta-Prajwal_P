@@ -1,5 +1,9 @@
 import tkinter as tk
 def move_player(Grid, player_pos, places):
+
+    if(player_pos[0]==0):
+        if(places>(player_pos[1])):
+            return player_pos
     for i in range(places):
         if player_pos == [0,0]:
             return player_pos
