@@ -16,7 +16,7 @@ import game_logic
 
 root = tk.Tk()
 root.attributes('-topmost',True)
-
+root.attributes("-alpha", 0.9)
 # LabelGrid = []
 
 # def updateGrid():
@@ -119,7 +119,7 @@ root.attributes('-topmost',True)
 
 bot = commands.Bot(command_prefix="!")
 players =[]
-colors=[ "yellow", "magenta","red", "green", "blue", "cyan"]
+colors=[ "yellow", "magenta", "green", "blue", "cyan"]
 players_clrs=[]
 players_pos=[]
 turn = 0

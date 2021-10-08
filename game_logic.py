@@ -31,7 +31,7 @@ def refresh_grid(root, players, players_pos, players_clrs, LabelGrid, Grid):
             Label.grid(column=j,row=i,sticky="nsew")
             LabelGrid.append(Label)
             if (i+j)%2 == 0:
-                Label.configure(bg="Black")
+                Label.configure(bg="#355C70")
             if Grid[i][j] == "Empty":
                 Label.configure(text="")
             elif Grid[i][j] == "Start":
@@ -44,6 +44,7 @@ def refresh_grid(root, players, players_pos, players_clrs, LabelGrid, Grid):
   
     for i in range(len(players)):
         p= tk.Label(root,text="Player"+str(i+1),bg=players_clrs[i])
+        # p= tk.Label(root,text="{}".format(players[i].username),bg=players_clrs[i])
         p.grid(column=players_pos[i][1],row=players_pos[i][0],sticky="n")
         LabelGrid.append(p)  
   # p2 = tk.Label(root,text="Player 2",bg="Blue")
