@@ -50,14 +50,14 @@ async def get_leaderboard(ctx):
 
     dataset=pd.read_csv('./leaderboard.csv')
     dataset.drop(dataset.filter(regex="Unnamed"),axis=1, inplace=True)
-    s = ['Player     Wins   Losses']
+    s = ['Player\t  Wins\t  Losses']
     # This needs to be adjusted based on expected range of values or   calculated dynamically
     for index, data in dataset.iterrows():
-        s.append('   '.join([str(item).center(7, ' ') for item in data.values]))
+        s.append('   '.join([str(item).center(8, ' ') for item in data.values]))
+        # s.append(str(item.ljust(20," ") for item in data.values))
         # Joining up scores into a line
     d = '```'+'\n'.join(s) + '```'
-    # Joining all lines togethor! 
-    embed = discord.Embed(title = 'Quotient Results', description = d)
+    embed = discord.Embed(title = 'Game LeaderBoard', description = d)
     await ctx.send(embed = embed)
 
 
@@ -119,9 +119,9 @@ async def roll(ctx):
         players_pos[turn]=game_logic.move_player(Grid, players_pos[turn], roll_val)
             
         game_logic.refresh_grid(root, players, players_pos, players_clrs, Label_Grid, Grid)
-        # cap = CAP.CAP(root) 
-        # cap.capture("File11.jpg", overwrite=True)
-        # await ctx.send(file=discord.File("File11.jpg"))
+        cap = CAP.CAP(root) 
+        cap.capture("File11.jpg", overwrite=True)
+        await ctx.send(file=discord.File("File11.jpg"))
         if(players_pos[turn]==[0,0]):
             await ctx.send("{} Won !!!".format(players[turn]))
             game=False
