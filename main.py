@@ -20,7 +20,7 @@ root = 1
 
 bot = commands.Bot(command_prefix="!")
 players =[]
-colors=[ "yellow", "magenta", "green", "blue", "cyan"]
+colors=[ "yellow", "magenta", "blue", "cyan",'pink']
 players_clrs=[]
 players_pos=[]
 turn = 0
@@ -84,14 +84,16 @@ async def new(ctx, *player_args_):
         root=tk.Tk()
         root.attributes('-topmost',True)
         root.attributes("-alpha", 0.9)
-        for player in player_args:
-          print(player)
-          await ctx.send("Starting a new Game Between "+ player+" ")
+        # for player in player_args:
+        #   print(player)
+        #   await ctx.send("Starting a new Game Between "+ player+" ")
         for i in player_args:
-          str=i.replace('!','')
-          players.append(str)
+          str_=i.replace('!','')
+          players.append(str_)
         random.shuffle(players)
-
+        for i in range(len(player_args)):
+          ind=str(i+1)
+          await ctx.send("Starting a new Game Between "+ players[i] + " : " + ind)
         if(len(players)<=1):
           await ctx.send("Please Select a player to play against!")
         else:
@@ -125,9 +127,9 @@ async def roll(ctx):
         players_pos[turn]=game_logic.move_player(Grid, players_pos[turn], roll_val)
             
         game_logic.refresh_grid(root, players, players_pos, players_clrs, Label_Grid, Grid)
-        # cap = CAP.CAP(root) 
-        # cap.capture("File11.jpg", overwrite=True)
-        # await ctx.send(file=discord.File("File11.jpg"))
+        cap = CAP.CAP(root) 
+        cap.capture("File11.jpg", overwrite=True)
+        await ctx.send(file=discord.File("File11.jpg"))
         if(players_pos[turn]==[0,0]):
             await ctx.send("{} Won !!!".format(players[turn]))
             game=False
@@ -141,4 +143,4 @@ async def roll(ctx):
     else:
         await ctx.send("It is not Your Chance, {} play your chance!!".format(players[turn]))
 
-bot.run("ODYxODYzMTkwOTIxMDg0OTM5.YOP-pQ.NPdVQZG07BxLeN8KCXqSz5GpSzg")
+bot.run("ODYxODYzMTkwOTIxMDg0OTM5.YOP-pQ.R5_SxQ-mnP_4m2uqZwLSy7Hcw9U")
