@@ -15,6 +15,7 @@ import game_logic
 # from random import randint
 
 root = tk.Tk()
+root.attributes('-topmost',True)
 
 # LabelGrid = []
 
@@ -191,7 +192,7 @@ async def roll(ctx):
         game_logic.refresh_grid(root, players, players_pos, players_clrs, Label_Grid, Grid)
         cap = CAP.CAP(root) 
         cap.capture("File11.jpg", overwrite=True)
-        # await ctx.send(file=discord.File("File11.jpg"))
+        await ctx.send(file=discord.File("File11.jpg"))
         if(players_pos[turn]==[0,0]):
             await ctx.send("{} Won !!!".format(players[turn]))
             game=False
