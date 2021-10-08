@@ -11,111 +11,14 @@ import datetime as dt
 import random
 import time
 import game_logic
+from leaderboard import update_leaderboard
+import pandas as pd
 # from time import sleep
 # from random import randint
 
 root = tk.Tk()
 root.attributes('-topmost',True)
 root.attributes("-alpha", 0.9)
-# LabelGrid = []
-
-# def updateGrid():
-#   global players
-#   global players_clrs
-#   global LabelGrid
-#   global Grid
-#   for i in LabelGrid:
-#     i.grid_forget()
-#   for i in range(10):
-#     for j in range(10):
-#       root.grid_rowconfigure(i,weight=1,minsize=60)
-#       root.grid_columnconfigure(j,weight=1,minsize=60)
-#       Label = tk.Label(root)
-#       Label.grid(column=j,row=i,sticky="nsew")
-#       LabelGrid.append(Label)
-#       if (i+j)%2 == 0:
-#         Label.configure(bg="Black")
-#       if Grid[i][j] == "Empty":
-#         Label.configure(text="")
-#       elif Grid[i][j] == "Start":
-#         Label.configure(text="Start",bg="Sky Blue")
-#       elif Grid[i][j] == "End":
-#         Label.configure(text="End",bg="Gold")
-#       else:
-#         LabelText = "Leads to\nCollumn "+str(Grid[i][j][1])+"\nRow "+str(Grid[i][j][0])
-#         Label.configure(text=LabelText,bg="Red" if Grid[i][j][2] == "S" else "Green")
-  
-#   for i in range(3):
-#     p= tk.Label(root,text="Player"+str(i+1),bg=players_clrs[i])
-#     p.grid(column=players[i][1],row=players[i][0],sticky="n")
-#     LabelGrid.append(p)  
-#   # p2 = tk.Label(root,text="Player 2",bg="Blue")
-#   # p2.grid(column=player2[1],row=player2[0],sticky="s")
-#   # LabelGrid.append(p2)
-#   root.update()
-
-# def movePlayer(player,spaces):
-#   global Grid
-#   endSpace = player
-#   for i in range(spaces):
-#     if endSpace == [0,0]:
-#       return endSpace
-#     if endSpace[0]%2 == 1:
-#       if endSpace[1] == 9:
-#         endSpace[0] -= 1
-#       else:
-#         endSpace[1] += 1
-#     else:
-#       if endSpace[1] == 0:
-#         endSpace[0] -= 1
-#       else:
-#         endSpace[1] -= 1
-#   if type(Grid[endSpace[0]][endSpace[1]])==list:
-#     print("here")
-#     return [Grid[endSpace[0]][endSpace[1]][0],Grid[endSpace[0]][endSpace[1]][1]]
-#   return endSpace
-
-# Turn = 0
-# Winner = ""
-
-# Text = tk.Label(root,text="Loading")
-# WaitVariable = tk.IntVar()
-# Button = tk.Button(root,text="Roll",command=lambda: WaitVariable.set(1))
-# Text.grid(column=0,row=10,columnspan=10,sticky="nsew")
-# Button.grid(column=0,row=11,columnspan=10,sticky="nsew")
-
-# root.grid_rowconfigure(10,weight=1,minsize=32)
-# root.grid_rowconfigure(11,weight=1,minsize=32)
-
-# updateGrid()
-# while True:
-#   Text.configure(text="Player " +str(Turn+1)+"s turn")
-#   Button.wait_variable(WaitVariable)
-#   roll = randint(1,6)
-#   Text.configure(text="Rolled a "+str(roll))
-
-#   players[Turn]= movePlayer(players[Turn],roll)
-#   if (players[Turn] == [0,0]):
-#     Winner = "Player "+str(Turn)
-#     break;
-#   # if Turn%2 == 1:
-#   #   player1 = movePlayer(player1,roll)
-#   #   if player1 == [0,0]:
-#   #     Winner = "Player 1"
-#   #     break
-#   # else:
-#   #   player2 = movePlayer(player2,roll)
-#   #   if player2 == [0,0]:
-#   #     Winner = "Player 1"
-#   #     break
-#   Turn = (1+Turn)%3
-#   updateGrid()
-#   sleep(1)
-
-# Text.configure(text=Winner+" wins!")
-# updateGrid()
-
-
 
 bot = commands.Bot(command_prefix="!")
 players =[]
@@ -127,7 +30,7 @@ new_board=True
 game = True
 Grid=[]
 Label_Grid=[]
-
+difficulty=2
 # Things to run when the bot connects to Discord
 
 @bot.event
@@ -140,11 +43,37 @@ async def on_ready():
     new_board=True
     game = True
 
+
+
 @bot.command(pass_context=True)
-async def new(ctx, *player_args):
+async def get_leaderboard(ctx):
+
+    dataset=pd.read_csv('./leaderboard.csv')
+    dataset.drop(dataset.filter(regex="Unnamed"),axis=1, inplace=True)
+    s = ['Player     Wins   Losses']
+    # This needs to be adjusted based on expected range of values or   calculated dynamically
+    for index, data in dataset.iterrows():
+        s.append('   '.join([str(item).center(7, ' ') for item in data.values]))
+        # Joining up scores into a line
+    d = '```'+'\n'.join(s) + '```'
+    # Joining all lines togethor! 
+    embed = discord.Embed(title = 'Quotient Results', description = d)
+    await ctx.send(embed = embed)
+
+
+
+
+@bot.command(pass_context=True)
+async def new(ctx, *player_args_):
     # print(new_board)
-    global players,players_clrs,turn,new_board, game, Grid, players_pos,colors
+    global players,players_clrs,turn,new_board, game, Grid, players_pos,colors,difficulty
     if new_board:
+        if(len(player_args_[-1])==1):
+            difficulty=int(player_args_[-1])
+            player_args=player_args_[:len(player_args_)-1]
+        else:
+          player_args=player_args_
+
 
         players=[]
         players_pos =[]
@@ -164,7 +93,7 @@ async def new(ctx, *player_args):
           time.sleep(1)
           await ctx.send("Its {}'s turn".format(players[0]))
           new_board=False
-          Grid=SnL_generator()
+          Grid=SnL_generator(difficulty)
           for i in range(len(players)):
             players_pos.append([9,0])
             players_clrs.append(colors[i])
@@ -190,12 +119,13 @@ async def roll(ctx):
         players_pos[turn]=game_logic.move_player(Grid, players_pos[turn], roll_val)
             
         game_logic.refresh_grid(root, players, players_pos, players_clrs, Label_Grid, Grid)
-        cap = CAP.CAP(root) 
-        cap.capture("File11.jpg", overwrite=True)
-        await ctx.send(file=discord.File("File11.jpg"))
+        # cap = CAP.CAP(root) 
+        # cap.capture("File11.jpg", overwrite=True)
+        # await ctx.send(file=discord.File("File11.jpg"))
         if(players_pos[turn]==[0,0]):
             await ctx.send("{} Won !!!".format(players[turn]))
             game=False
+            update_leaderboard(players, turn)
         else:
           turn = (turn+1)%len(players)
           await ctx.send("Its {}'s turn".format(players[turn]))

@@ -58,9 +58,17 @@ def generator_util(nS, nL):
     return [ladders,snakes]
 
 
-def SnL_generator():
-    nS = randint(4,7)
-    nL = randint(4,7)
+def SnL_generator(difficulty):
+    if difficulty==1:
+        nS = randint(3,5)
+        nL = randint(5,10)
+    elif difficulty==2:
+        nS = randint(4,7)
+        nL = randint(4,7)
+    else:
+        nS = randint(6,9)
+        nL = randint(3,5)
+        
     SL=generator_util(nS,nL)
     while(not SL):
         print("redoing")
