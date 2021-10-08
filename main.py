@@ -7,6 +7,7 @@ from SnL_generator import SnL_generator
 import random
 import CAP
 import os
+from dotenv import load_dotenv
 import datetime as dt
 import random
 import time
@@ -102,7 +103,7 @@ async def new(ctx, *player_args_):
           new_board=False
           Grid=SnL_generator(difficulty)
           for i in range(len(players)):
-            players_pos.append([0,7])
+            players_pos.append([9,0])
             players_clrs.append(colors[i])
     else:
         await ctx.send("You already have a game running_")
@@ -143,4 +144,5 @@ async def roll(ctx):
     else:
         await ctx.send("It is not Your Chance, {} play your chance!!".format(players[turn]))
 
-bot.run("ODYxODYzMTkwOTIxMDg0OTM5.YOP-pQ.R5_SxQ-mnP_4m2uqZwLSy7Hcw9U")
+load_dotenv()
+bot.run(os.environ.get("BOT_TOKEN"))
